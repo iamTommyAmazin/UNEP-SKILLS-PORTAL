@@ -31,6 +31,5 @@ http://localhost:8000
 
 **Login Credentials**
 Admin: admin@unep.org / Admin@123
-
 Staff: staff@unep.org / Staff@123
 
