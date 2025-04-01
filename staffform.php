@@ -1,141 +1,138 @@
 <?php
-// To connect to the mysql database Database connection
-require_once '../config/db.php';
+// Database configuration
+define('DB_HOST', 'localhost');     // Database server
+define('DB_USER', 'unep_admin');    // Database username
+define('DB_PASS', 'SecurePassword123!');  // Database password
+define('DB_NAME', 'unep_skills_db');      // Database name
 
-// Get the deatails from database
-$educationLevels = $pdo->query("SELECT * FROM education_levels")->fetchAll();
-$dutyStations = $pdo->query("SELECT * FROM duty_stations")->fetchAll();
+try {
+    // Create PDO connection
+    $pdo = new PDO(
+        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+        DB_USER,
+        DB_PASS,
+    );
+
+// Get dropdown options from database
+$educationOptions = $pdo->query("SELECT * FROM education_levels")->fetchAll();
+$stationOptions = $pdo->query("SELECT * FROM duty_stations")->fetchAll();
 $softwareOptions = $pdo->query("SELECT * FROM software_expertise")->fetchAll();
-$languages = $pdo->query("SELECT * FROM languages")->fetchAll();
-$responsibilityLevels = ['Junior', 'Mid-level', 'Senior', 'Manager', 'Director'];
-$expertiseLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
+$languageOptions = $pdo->query("SELECT * FROM languages")->fetchAll();
+
+// Static dropdown options
+$skillLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
+$jobLevels = ['Junior', 'Mid-level', 'Senior', 'Manager', 'Director'];
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <title>UNEP Staff Information Form</title>
+    <title>Staff Registration Form</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-    <div class="form-container">
-        <h1>Staff Information Form</h1>
+    <div class="form-wrapper">
+        <h1>Staff Registration</h1>
         
-        <form action="process_staff.php" method="POST" id="staffForm">
-            <!-- Basic Information Section -->
-            <fieldset>
-                <legend>Personal Information</legend>
-                
-                <div class="form-group">
-                    <label for="indexNumber">Index Number:*</label>
-                    <input type="text" id="indexNumber" name="indexNumber" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="fullNames">Full Names:*</label>
-                    <input type="text" id="fullNames" name="fullNames" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email:*</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="currentLocation">Current Location:</label>
-                    <input type="text" id="currentLocation" name="currentLocation">
-                </div>
-            </fieldset>
+        <form method="POST" action="save_staff.php">
             
-            <!-- Education and Position Section -->
-            <fieldset>
-                <legend>Education & Position</legend>
-                
-                <div class="form-group">
-                    <label for="education">Highest Level of Education:*</label>
-                    <select id="education" name="education" required>
-                        <option value="">-- Select --</option>
-                        <?php foreach ($educationLevels as $level): ?>
-                            <option value="<?= $level['id'] ?>"><?= htmlspecialchars($level['level_name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="dutyStation">Duty Station:*</label>
-                    <select id="dutyStation" name="dutyStation" required>
-                        <option value="">-- Select --</option>
-                        <?php foreach ($dutyStations as $station): ?>
-                            <option value="<?= $station['id'] ?>"><?= htmlspecialchars($station['station_name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Availability for Remote Work:</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="remoteWork" value="1"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="remoteWork" value="0" checked> No
-                        </label>
-                    </div>
-                </div>
-            </fieldset>
+            <h2>Personal Details</h2>
+            <div class="form-row">
+                <label>Staff ID Number*</label>
+                <input type="text" name="staff_id" required>
+            </div>
             
-            <!-- Skills Section -->
-            <fieldset>
-                <legend>Skills & Expertise</legend>
-                
-                <div class="form-group">
-                    <label for="software">Software Expertise:*</label>
-                    <select id="software" name="software" required>
-                        <option value="">-- Select --</option>
-                        <?php foreach ($softwareOptions as $software): ?>
-                            <option value="<?= $software['id'] ?>"><?= htmlspecialchars($software['software_name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="expertiseLevel">Expertise Level:*</label>
-                    <select id="expertiseLevel" name="expertiseLevel" required>
-                        <option value="">-- Select --</option>
-                        <?php foreach ($expertiseLevels as $level): ?>
-                            <option value="<?= $level ?>"><?= $level ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="language">Language:*</label>
-                    <select id="language" name="language" required>
-                        <option value="">-- Select --</option>
-                        <?php foreach ($languages as $lang): ?>
-                            <option value="<?= $lang['id'] ?>"><?= htmlspecialchars($lang['language_name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                
-                 <div class="form-group">
-                    <label for="responsibility">Level of Responsibility:*</label>
-                    <select id="responsibility" name="responsibility" required>
-                        <option value="">-- Select --</option>
-                        <?php foreach ($responsibilityLevels as $level): ?>
-                            <option value="<?= $level ?>"><?= $level ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </fieldset>
+            <div class="form-row">
+                <label>Full Name*</label>
+                <input type="text" name="full_name" required>
+            </div>
             
-            <div class="form-actions">
-                <button type="submit" class="btn-submit">Save Information</button>
-                <button type="reset" class="btn-reset">Clear Form</button>
+            <div class="form-row">
+                <label>Email*</label>
+                <input type="email" name="email" required>
+            </div>
+            
+            <div class="form-row">
+                <label>Current Location</label>
+                <input type="text" name="location">
+            </div>
+            
+            <h2>Education & Work</h2>
+            <div class="form-row">
+                <label>Highest Education*</label>
+                <select name="education" required>
+                    <option value="">Select education level</option>
+                    <?php foreach($educationOptions as $option): ?>
+                    <option value="<?=$option['id']?>"><?=$option['level_name']?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <label>Duty Station*</label>
+                <select name="duty_station" required>
+                    <option value="">Select duty station</option>
+                    <?php foreach($stationOptions as $station): ?>
+                    <option value="<?=$station['id']?>"><?=$station['station_name']?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <label>Available for Remote Work?</label>
+                <div class="radio-options">
+                    <label><input type="radio" name="remote_work" value="1"> Yes</label>
+                    <label><input type="radio" name="remote_work" value="0" checked> No</label>
+                </div>
+            </div>
+            
+            <h2>Skills & Experience</h2>
+            <div class="form-row">
+                <label>Software Skills*</label>
+                <select name="software" required>
+                    <option value="">Select software</option>
+                    <?php foreach($softwareOptions as $software): ?>
+                    <option value="<?=$software['id']?>"><?=$software['software_name']?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <label>Skill Level*</label>
+                <select name="skill_level" required>
+                    <option value="">Select your level</option>
+                    <?php foreach($skillLevels as $level): ?>
+                    <option value="<?=$level?>"><?=$level?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <label>Language*</label>
+                <select name="language" required>
+                    <option value="">Select language</option>
+                    <?php foreach($languageOptions as $lang): ?>
+                    <option value="<?=$lang['id']?>"><?=$lang['language_name']?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <label>Job Level*</label>
+                <select name="job_level" required>
+                    <option value="">Select your level</option>
+                    <?php foreach($jobLevels as $level): ?>
+                    <option value="<?=$level?>"><?=$level?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="form-buttons">
+                <button type="submit" class="submit-btn">Save Profile</button>
+                <button type="reset" class="clear-btn">Start Over</button>
             </div>
         </form>
     </div>
-
-    <script src="newskillportal.js"></script>
+    
 </body>
 </html>
