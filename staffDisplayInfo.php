@@ -1,8 +1,17 @@
 <?php
-// Database connection and authentication check
-require_once '../config/db.php';
-require_once '../includes/auth_check.php';
+// Database configuration
+define('DB_HOST', 'localhost');     // Database server
+define('DB_USER', 'unep_admin');    // Database username
+define('DB_PASS', 'SecurePassword123!');  // Database password
+define('DB_NAME', 'unep_skills_db');      // Database name
 
+try {
+    // Create PDO connection
+    $pdo = new PDO(
+        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+        DB_USER,
+        DB_PASS,
+    );
 // Fetch all staff with their education and duty station info
 $query = "SELECT s.id, s.index_number, s.full_names, s.email, s.current_location, 
                  e.level_name AS education, d.station_name AS duty_station
