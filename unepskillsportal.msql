@@ -1,0 +1,57 @@
+/* UNEP Staff table
+for profile generation */
+CREATE TABLE staff (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    index_number VARCHAR(20) UNIQUE NOT NULL,
+    full_names VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    current_location VARCHAR(100),
+    highest_education_id INT,
+    duty_station_id INT,
+    remote_available BOOLEAN DEFAULT FALSE,
+    language_id INT,
+    responsibility_level VARCHAR(50),
+    FOREIGN KEY (highest_education_id) REFERENCES education_levels(id),
+    FOREIGN KEY (duty_station_id) REFERENCES duty_stations(id),
+    FOREIGN KEY (language_id) REFERENCES languages(id)
+);
+
+/* Education levels lookup table
+to familiarise the level of education of the staff*/
+CREATE TABLE education_levels (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    level_name VARCHAR(100) NOT NULL
+);
+
+/* Duty stations lookup table
+to help know the location of user and if rostered to be near the staff duty station*/
+CREATE TABLE duty_stations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    station_name VARCHAR(100) NOT NULL,
+    location VARCHAR(100)
+);
+
+/* Technologies use xpertise table
+to gauge the skill level of the staff if they have interacted with commonn UN systems like Umoja/ Indico other systems*/
+CREATE TABLE staff_software_expertise (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    staff_id INT NOT NULL,
+    software_id INT NOT NULL,
+    expertise_level VARCHAR(50) NOT NULL,
+    FOREIGN KEY (staff_id) REFERENCES staff(id),
+    FOREIGN KEY (software_id) REFERENCES software_expertise(id)
+);
+
+/* Technologies lookup table 
+to check up the technology */
+CREATE TABLE software_expertise (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    software_name VARCHAR(100) NOT NULL
+);
+
+* Language lookup table 
+to check up the language the staff understands */
+CREATE TABLE languages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    language_name VARCHAR(50) NOT NULL
+);
